@@ -1,0 +1,10 @@
+#local-video {
+    width: 640px;
+    height: 480px;
+    max-width: 100%;
+}
+
+#error-message {
+    display: none;
+    color: red;
+}
