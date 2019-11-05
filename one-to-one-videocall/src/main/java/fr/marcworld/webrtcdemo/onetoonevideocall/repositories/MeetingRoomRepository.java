@@ -20,4 +20,9 @@ public interface MeetingRoomRepository {
 
     MeetingRoom removeUserFromMeetingRoom(int id, String username);
 
+    /**
+     * @return Number of deleted rooms.
+     */
+    int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min();
+
 }

@@ -7,6 +7,7 @@ import fr.marcworld.webrtcdemo.onetoonevideocall.model.MeetingRoom;
 import fr.marcworld.webrtcdemo.onetoonevideocall.repositories.MeetingRoomRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
     public MeetingRoom create(MeetingRoom meetingRoom) {
         meetingRoom.setId(nextId.getAndIncrement());
         meetingRoom.setCreationDateTime(ZonedDateTime.now());
+        meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
         meetingRoom.setUsernames(new ArrayList<>());
         synchronized (meetingRoomById) {
             meetingRoomById.put(meetingRoom.getId(), meetingRoom);
@@ -80,6 +82,7 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
             }
 
             meetingRoom.getUsernames().add(username);
+            meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
 
             return copy(meetingRoom);
         }
@@ -95,8 +98,27 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
             }
 
             meetingRoom.getUsernames().remove(username);
+            meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
 
             return copy(meetingRoom);
+        }
+    }
+
+    @Override
+    public int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min() {
+        ZonedDateTime now = ZonedDateTime.now();
+
+        synchronized (meetingRoomById) {
+            List<MeetingRoom> meetingRoomsToDelete = meetingRoomById.values().stream()
+                    .filter(room -> room.getUsernames().isEmpty())
+                    .filter(room -> Duration.between(room.getLastUpdateDateTime(), now).toMinutes() >= 1)
+                    .collect(Collectors.toList());
+
+            for (MeetingRoom room : meetingRoomsToDelete) {
+                meetingRoomById.remove(room.getId());
+            }
+
+            return meetingRoomsToDelete.size();
         }
     }
 
@@ -104,6 +126,7 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
         return new MeetingRoom(
                 original.getId(),
                 original.getCreationDateTime(),
+                original.getLastUpdateDateTime(),
                 original.getName(),
                 original.getUsernames());
     }

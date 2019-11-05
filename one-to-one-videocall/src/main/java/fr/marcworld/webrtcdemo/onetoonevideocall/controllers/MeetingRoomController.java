@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -115,12 +116,20 @@ public class MeetingRoomController {
         // TODO
     }
 
+    // TODO send pings
+
+    @Scheduled(fixedDelay = 30000)
+    public void purgeEmptyMeetingRooms() {
+        int nbDeletedRooms = meetingRoomRepository.deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min();
+        if (nbDeletedRooms > 0) {
+            publishMeetingRoomsUpdate();
+        }
+    }
+
     private void publishMeetingRoomsUpdate() {
         executor.execute(() -> {
             List<MeetingRoom> meetingRooms = meetingRoomRepository.findAll();
             messagingTemplate.convertAndSend("/topic/meeting-rooms", meetingRooms);
         });
     }
-
-    // TODO send pings
 }

@@ -58,6 +58,7 @@ body {
 @media (min-width: 768px) {
     #meeting-rooms-panel {
         flex: none;
+        min-width: 324px;
     }
 
     #show-previous-panel, #show-next-panel {
