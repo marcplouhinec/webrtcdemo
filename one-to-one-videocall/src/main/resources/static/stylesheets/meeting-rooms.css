@@ -1,0 +1,58 @@
+#meeting-rooms-header {
+    display: flex;
+    height: 40px;
+    margin-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+#meeting-rooms-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+#meeting-rooms-footer {
+    display: flex;
+    height: 40px;
+    margin-top: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.meeting-room {
+    display: flex;
+    width: 320px;
+    max-width: 100%;
+    margin-top: 4px;
+    padding: 2px;
+}
+
+.meeting-room-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.meeting-room-enter {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.meeting-room button {
+    padding: 4px;
+}
+
+#meeting-rooms-body-message {
+    padding-top: 32px;
+    color: #999;
+}
+
+.active-meeting-room {
+    background-color: #ccc;
+    color: black;
+}

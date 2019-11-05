@@ -1,13 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>One-to-One video call</title>
+    <link rel="stylesheet" href="stylesheets/index.css"/>
+    <link rel="stylesheet" href="stylesheets/meeting-rooms.css"/>
+    <link rel="stylesheet" href="stylesheets/conversation.css"/>
 </head>
 <body>
-<video id="local-video" autoplay="autoplay"></video>
 
-<p id="error-message"></p>
+<div id="header-panel">
+    <button id="show-previous-panel"></button>
+    <div id="header-panel-title">WebRTC demo</div>
+    <button id="show-next-panel"></button>
+</div>
 
-<script src="scripts/indexController.js"></script>
+<div id="body-panel">
+    <div class="content-panel" id="meeting-rooms-panel" data-nav-name="Rooms">
+        <div id="meeting-rooms-header">
+            Meeting rooms
+        </div>
+        <div id="meeting-rooms-body">
+        </div>
+        <div id="meeting-rooms-footer">
+            <button id="create-meeting-room">Create new room</button>
+        </div>
+    </div>
+
+    <div class="content-panel" id="conversation-panel" data-nav-name="Conversation">
+        <div id="main-speaker-panel">
+            <div id="main-speaker-video"></div>
+        </div>
+        <div id="speaker-miniatures-panel">
+            <div class="speaker-miniature">
+                <div class="speaker-miniature-video"></div>
+                <div class="speaker-miniature-name">Pierre</div>
+            </div>
+            <div class="speaker-miniature">
+                <div class="speaker-miniature-video"></div>
+                <div class="speaker-miniature-name">Paul</div>
+            </div>
+            <div class="speaker-miniature">
+                <div class="speaker-miniature-video"></div>
+                <div class="speaker-miniature-name">Jacques</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
+<script type="module" src="scripts/app.js"></script>
 </body>
 </html>
