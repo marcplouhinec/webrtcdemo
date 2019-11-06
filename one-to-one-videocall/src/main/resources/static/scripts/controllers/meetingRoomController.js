@@ -50,13 +50,13 @@ const meetingRoomController = {
      */
     _updateMeetingRooms(meetingRooms) {
         const meetingRoomContents = meetingRooms.map(meetingRoom => {
-            const isInRoom = this._username && meetingRoom.usernames.includes(this._username);
+            const isInRoom = this._username && meetingRoom.users.some(user => user.name === this._username);
 
             const mainButtonClass = isInRoom ? 'exit-meeting-room' : 'enter-meeting-room';
             const mainButtonText = isInRoom ? 'Exit' : 'Enter';
 
             return `<div class="meeting-room ${isInRoom ? 'active-meeting-room' : ''}">
-                <div class="meeting-room-name">${meetingRoom.name} - ${meetingRoom.usernames.length} member(s)</div>
+                <div class="meeting-room-name">${meetingRoom.name} - ${meetingRoom.users.length} member(s)</div>
                 <div class="meeting-room-enter">
                     <button class="${mainButtonClass}" data-meeting-room-id="${meetingRoom.id}">
                         ${mainButtonText}
@@ -143,7 +143,6 @@ const meetingRoomController = {
                     enterButton.className = 'exit-meeting-room';
                     enterButton.textContent = 'Exit';
                     enterButton.disabled = false;
-                    // TODO show the meeting room as selected
                     // TODO invoke conversationController
                     break;
 
@@ -155,7 +154,6 @@ const meetingRoomController = {
                     enterButton.className = 'enter-meeting-room';
                     enterButton.textContent = 'Enter';
                     enterButton.disabled = false;
-                    // TODO show the meeting room as not selected
                     // TODO invoke conversationController
                     break;
 

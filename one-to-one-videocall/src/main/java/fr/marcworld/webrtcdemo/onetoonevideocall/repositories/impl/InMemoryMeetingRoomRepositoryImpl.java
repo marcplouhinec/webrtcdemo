@@ -1,22 +1,20 @@
 package fr.marcworld.webrtcdemo.onetoonevideocall.repositories.impl;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.MeetingRoomFullException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.MeetingRoomNotEmptyException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.model.MeetingRoom;
+import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.EntityNotFoundException;
+import fr.marcworld.webrtcdemo.onetoonevideocall.entities.MeetingRoom;
 import fr.marcworld.webrtcdemo.onetoonevideocall.repositories.MeetingRoomRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Service
+@Repository
 public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository {
 
     private final Map<Integer, MeetingRoom> meetingRoomById = new TreeMap<>();
@@ -24,14 +22,24 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
 
     @Override
     public MeetingRoom create(MeetingRoom meetingRoom) {
-        meetingRoom.setId(nextId.getAndIncrement());
-        meetingRoom.setCreationDateTime(ZonedDateTime.now());
-        meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
-        meetingRoom.setUsernames(new ArrayList<>());
+        ZonedDateTime now = ZonedDateTime.now();
+        MeetingRoom newMeetingRoom = new MeetingRoom(nextId.getAndIncrement(), now, meetingRoom.getName());
+
         synchronized (meetingRoomById) {
-            meetingRoomById.put(meetingRoom.getId(), meetingRoom);
+            meetingRoomById.put(newMeetingRoom.getId(), newMeetingRoom);
         }
-        return meetingRoom;
+        return copy(newMeetingRoom);
+    }
+
+    @Override
+    public MeetingRoom findById(int id) {
+        synchronized (meetingRoomById) {
+            MeetingRoom meetingRoom = meetingRoomById.get(id);
+            if (meetingRoom == null) {
+                return null;
+            }
+            return copy(meetingRoom);
+        }
     }
 
     @Override
@@ -44,15 +52,11 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
     }
 
     @Override
-    public void deleteMeetingRoomById(int id) throws MeetingRoomNotEmptyException {
+    public void deleteMeetingRoomById(int id) throws EntityNotFoundException {
         synchronized (meetingRoomById) {
             MeetingRoom meetingRoom = meetingRoomById.get(id);
             if (meetingRoom == null) {
-                throw new IllegalArgumentException("Unknown meeting room ID");
-            }
-
-            if (!meetingRoom.getUsernames().isEmpty()) {
-                throw new MeetingRoomNotEmptyException();
+                throw new EntityNotFoundException();
             }
 
             meetingRoomById.remove(id);
@@ -60,57 +64,12 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
     }
 
     @Override
-    public MeetingRoom addUserToMeetingRoom(int id, String username)
-            throws MeetingRoomFullException, UserAlreadyExistsException {
-
-        synchronized (meetingRoomById) {
-            MeetingRoom meetingRoom = meetingRoomById.get(id);
-
-            if (meetingRoom == null) {
-                throw new IllegalArgumentException("Unknown meeting room ID");
-            }
-            if (meetingRoom.getUsernames().size() >= 2) {
-                throw new MeetingRoomFullException();
-            }
-
-            // Check if the username is unique across meeting rooms
-            boolean usernameAlreadyExists = meetingRoomById.values().stream()
-                    .flatMap(room -> room.getUsernames().stream())
-                    .anyMatch(roomUsername -> roomUsername.equals(username));
-            if (usernameAlreadyExists) {
-                throw new UserAlreadyExistsException();
-            }
-
-            meetingRoom.getUsernames().add(username);
-            meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
-
-            return copy(meetingRoom);
-        }
-    }
-
-    @Override
-    public MeetingRoom removeUserFromMeetingRoom(int id, String username) {
-        synchronized (meetingRoomById) {
-            MeetingRoom meetingRoom = meetingRoomById.get(id);
-
-            if (meetingRoom == null) {
-                throw new IllegalArgumentException("Unknown meeting room ID");
-            }
-
-            meetingRoom.getUsernames().remove(username);
-            meetingRoom.setLastUpdateDateTime(ZonedDateTime.now());
-
-            return copy(meetingRoom);
-        }
-    }
-
-    @Override
-    public int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min() {
+    public int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min(Set<Integer> usedMeetingRoomIds) {
         ZonedDateTime now = ZonedDateTime.now();
 
         synchronized (meetingRoomById) {
             List<MeetingRoom> meetingRoomsToDelete = meetingRoomById.values().stream()
-                    .filter(room -> room.getUsernames().isEmpty())
+                    .filter(room -> !usedMeetingRoomIds.contains(room.getId()))
                     .filter(room -> Duration.between(room.getLastUpdateDateTime(), now).toMinutes() >= 1)
                     .collect(Collectors.toList());
 
@@ -125,9 +84,7 @@ public class InMemoryMeetingRoomRepositoryImpl implements MeetingRoomRepository 
     private MeetingRoom copy(MeetingRoom original) {
         return new MeetingRoom(
                 original.getId(),
-                original.getCreationDateTime(),
                 original.getLastUpdateDateTime(),
-                original.getName(),
-                original.getUsernames());
+                original.getName());
     }
 }

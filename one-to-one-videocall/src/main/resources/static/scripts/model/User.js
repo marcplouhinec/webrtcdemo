@@ -1,32 +1,27 @@
-import User from './User.js';
-
-class MeetingRoom {
+class User {
 
     /**
-     * @param {{id: Number, lastUpdateDateTime: String, name: String, users: Array}} properties
+     * @param {{id: Number, lastUpdateDateTime: String, name: String, meetingRoomId: Number}} properties
      */
     static fromProperties(properties) {
-        const userProperties = properties.users || [];
-        const users = userProperties.map(userProperties => User.fromProperties(userProperties));
-
-        return new MeetingRoom(
+        return new User(
             properties.id,
             properties.lastUpdateDateTime,
             properties.name,
-            users);
+            properties.meetingRoomId);
     }
 
     /**
      * @param {Number} id
      * @param {String} lastUpdateDateTime
      * @param {String} name
-     * @param {User[]} users
+     * @param {Number} meetingRoomId
      */
-    constructor(id, lastUpdateDateTime, name, users) {
+    constructor(id, lastUpdateDateTime, name, meetingRoomId) {
         this._id = id;
         this._lastUpdateDateTime = lastUpdateDateTime;
         this._name = name;
-        this._users = users;
+        this._meetingRoomId = meetingRoomId;
     }
 
     get id() {
@@ -41,9 +36,9 @@ class MeetingRoom {
         return this._name;
     }
 
-    get users() {
-        return this._users || [];
+    get meetingRoomId() {
+        return this._meetingRoomId;
     }
 }
 
-export default MeetingRoom;
+export default User;

@@ -1,4 +1,4 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.model;
+package fr.marcworld.webrtcdemo.onetoonevideocall.dtos;
 
 public class MeetingRoomEvent {
 

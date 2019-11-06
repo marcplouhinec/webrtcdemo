@@ -1,28 +1,24 @@
 package fr.marcworld.webrtcdemo.onetoonevideocall.repositories;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.MeetingRoomFullException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.MeetingRoomNotEmptyException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.model.MeetingRoom;
+import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.EntityNotFoundException;
+import fr.marcworld.webrtcdemo.onetoonevideocall.entities.MeetingRoom;
 
 import java.util.List;
+import java.util.Set;
 
 public interface MeetingRoomRepository {
 
     MeetingRoom create(MeetingRoom meetingRoom);
 
+    MeetingRoom findById(int id);
+
     List<MeetingRoom> findAll();
 
-    void deleteMeetingRoomById(int id) throws MeetingRoomNotEmptyException;
-
-    MeetingRoom addUserToMeetingRoom(int id, String username)
-            throws MeetingRoomFullException, UserAlreadyExistsException;
-
-    MeetingRoom removeUserFromMeetingRoom(int id, String username);
+    void deleteMeetingRoomById(int id) throws EntityNotFoundException;
 
     /**
      * @return Number of deleted rooms.
      */
-    int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min();
+    int deleteEmptyMeetingRoomsThatHaveNotBeenUpdatedSince1min(Set<Integer> usedMeetingRoomIds);
 
 }

@@ -1,4 +1,4 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.model;
+package fr.marcworld.webrtcdemo.onetoonevideocall.dtos;
 
 public enum MeetingRoomEventCode {
     // From server to client
@@ -8,6 +8,7 @@ public enum MeetingRoomEventCode {
     USER_REJECTED_BECAUSE_ROOM_FULL,
     USER_HEARTBEAT_PING,
     UNKNOWN_MEETING_ROOM,
+    UNKNOWN_USER,
 
     // From client to server
     USER_HEARTBEAT_PONG,
