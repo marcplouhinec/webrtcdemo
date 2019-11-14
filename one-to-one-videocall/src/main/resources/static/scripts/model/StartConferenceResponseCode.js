@@ -1,0 +1,15 @@
+/**
+ * @readonly
+ * @enum {String}
+ */
+const StartConferenceResponseCode = {
+    SUCCESS: 'SUCCESS',
+
+    UNKNOWN_CALLER_USER_ID: 'UNKNOWN_CALLER_USER_ID',
+    UNKNOWN_OTHER_USER_ID: 'UNKNOWN_OTHER_USER_ID',
+
+    CALLER_USER_ALREADY_IN_CONFERENCE: 'CALLER_USER_ALREADY_IN_CONFERENCE',
+    OTHER_USER_ALREADY_IN_CONFERENCE: 'OTHER_USER_ALREADY_IN_CONFERENCE',
+};
+
+export default StartConferenceResponseCode;

@@ -1,4 +1,4 @@
-import meetingRoomController from './meetingRoomController.js';
+import usersPanelController from './usersPanelController.js';
 
 const indexController = {
 
@@ -33,7 +33,7 @@ const indexController = {
         }
 
         // Initialize other controllers
-        meetingRoomController.init();
+        usersPanelController.init();
 
         /*
 

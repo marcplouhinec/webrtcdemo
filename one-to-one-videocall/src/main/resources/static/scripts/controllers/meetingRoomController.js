@@ -143,7 +143,7 @@ const meetingRoomController = {
                     enterButton.className = 'exit-meeting-room';
                     enterButton.textContent = 'Exit';
                     enterButton.disabled = false;
-                    // TODO invoke conversationController
+                    // TODO invoke conversationPanelController
                     break;
 
                 case MeetingRoomEventCode.USER_HAS_EXITED:
@@ -154,7 +154,7 @@ const meetingRoomController = {
                     enterButton.className = 'enter-meeting-room';
                     enterButton.textContent = 'Enter';
                     enterButton.disabled = false;
-                    // TODO invoke conversationController
+                    // TODO invoke conversationPanelController
                     break;
 
                 case MeetingRoomEventCode.USER_REJECTED_BECAUSE_ROOM_FULL:

@@ -1,0 +1,58 @@
+#users-header {
+    display: flex;
+    height: 40px;
+    margin-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+#users-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+#users-body ul.conference-rooms {
+    margin-top: 0;
+    margin-bottom: 8px;
+    padding-left: 0;
+}
+
+#users-body ul.room-users {
+    padding-left: 16px;
+}
+
+#users-body li {
+    list-style-type: none;
+}
+
+.user {
+    display: flex;
+    padding: 2px;
+}
+
+.user-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.user button {
+    padding: 6px;
+}
+
+.current-user {
+    color: #999;
+}
+
+.current-user button {
+    opacity: 0;
+}
+
+#users-body-message {
+    padding-top: 32px;
+    color: #999;
+}

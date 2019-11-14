@@ -37,7 +37,7 @@ body {
     display: flex;
 }
 
-#meeting-rooms-panel {
+#users-panel {
     flex: 1;
     display: none;
     flex-direction: column;
@@ -56,7 +56,7 @@ body {
 
 /* Tablets and bigger */
 @media (min-width: 768px) {
-    #meeting-rooms-panel {
+    #users-panel {
         flex: none;
         min-width: 324px;
     }
