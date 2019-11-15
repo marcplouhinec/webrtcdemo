@@ -23,6 +23,7 @@
 
 #users-body ul.room-users {
     padding-left: 16px;
+    padding-top: 4px;
 }
 
 #users-body li {
@@ -41,7 +42,7 @@
 }
 
 .user button {
-    padding: 6px;
+    padding: 4px 8px;
 }
 
 .current-user {
