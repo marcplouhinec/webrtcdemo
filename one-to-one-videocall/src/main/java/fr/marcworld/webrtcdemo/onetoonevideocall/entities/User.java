@@ -8,16 +8,16 @@ public class User {
     private Integer id;
     private ZonedDateTime lastUpdateDateTime;
     private String name;
-    private Integer meetingRoomId;
+    private Integer conferenceRoomNumber;
 
     public User() {
     }
 
-    public User(Integer id, ZonedDateTime lastUpdateDateTime, String name, Integer meetingRoomId) {
+    public User(Integer id, ZonedDateTime lastUpdateDateTime, String name, Integer conferenceRoomNumber) {
         this.id = id;
         this.lastUpdateDateTime = lastUpdateDateTime;
         this.name = name;
-        this.meetingRoomId = meetingRoomId;
+        this.conferenceRoomNumber = conferenceRoomNumber;
     }
 
     public User(String name) {
@@ -48,12 +48,12 @@ public class User {
         this.name = name;
     }
 
-    public Integer getMeetingRoomId() {
-        return meetingRoomId;
+    public Integer getConferenceRoomNumber() {
+        return conferenceRoomNumber;
     }
 
-    public void setMeetingRoomId(Integer meetingRoomId) {
-        this.meetingRoomId = meetingRoomId;
+    public void setConferenceRoomNumber(Integer conferenceRoomNumber) {
+        this.conferenceRoomNumber = conferenceRoomNumber;
     }
 
     @Override

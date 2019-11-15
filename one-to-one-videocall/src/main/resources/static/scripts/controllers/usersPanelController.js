@@ -51,7 +51,7 @@ const usersPanelController = {
         // Group users by conference room
         const usersByRoomNumber = users.reduce(
             (map, user) => {
-                const roomNumber = user.meetingRoomId || -1;
+                const roomNumber = user.conferenceRoomNumber || -1;
                 if (map.has(roomNumber)) {
                     map.get(roomNumber).push(user);
                 } else {

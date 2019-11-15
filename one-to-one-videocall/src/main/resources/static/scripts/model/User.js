@@ -1,27 +1,32 @@
 class User {
 
     /**
-     * @param {{id: Number, lastUpdateDateTime: String, name: String, meetingRoomId: Number}} properties
+     * @param {{
+     *     id: Number,
+     *     lastUpdateDateTime: String,
+     *     name: String,
+     *     conferenceRoomNumber: Number
+     * }} properties
      */
     static fromProperties(properties) {
         return new User(
             properties.id,
             properties.lastUpdateDateTime,
             properties.name,
-            properties.meetingRoomId);
+            properties.conferenceRoomNumber);
     }
 
     /**
      * @param {Number} id
      * @param {String} lastUpdateDateTime
      * @param {String} name
-     * @param {Number} meetingRoomId
+     * @param {Number} conferenceRoomNumber
      */
-    constructor(id, lastUpdateDateTime, name, meetingRoomId) {
+    constructor(id, lastUpdateDateTime, name, conferenceRoomNumber) {
         this._id = id;
         this._lastUpdateDateTime = lastUpdateDateTime;
         this._name = name;
-        this._meetingRoomId = meetingRoomId;
+        this._conferenceRoomNumber = conferenceRoomNumber;
     }
 
     get id() {
@@ -36,8 +41,8 @@ class User {
         return this._name;
     }
 
-    get meetingRoomId() {
-        return this._meetingRoomId;
+    get conferenceRoomNumber() {
+        return this._conferenceRoomNumber;
     }
 }
 

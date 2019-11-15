@@ -58,7 +58,7 @@ public class UserController {
                     .body(StartConferenceResponseCode.UNKNOWN_CALLER_USER_ID);
         }
 
-        if (callerUser.getMeetingRoomId() != null) {
+        if (callerUser.getConferenceRoomNumber() != null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(StartConferenceResponseCode.CALLER_USER_ALREADY_IN_CONFERENCE);
@@ -71,7 +71,7 @@ public class UserController {
                     .body(StartConferenceResponseCode.UNKNOWN_OTHER_USER_ID);
         }
 
-        if (otherUser.getMeetingRoomId() != null) {
+        if (otherUser.getConferenceRoomNumber() != null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(StartConferenceResponseCode.OTHER_USER_ALREADY_IN_CONFERENCE);
@@ -91,14 +91,14 @@ public class UserController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(ExitFromConferenceCallResponseCode.UNKNOWN_USER_ID);
         }
-        if (user.getMeetingRoomId() == null) {
+        if (user.getConferenceRoomNumber() == null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(ExitFromConferenceCallResponseCode.USER_NOT_IN_CONFERENCE_CALL);
         }
 
         // Warn all conference room members that the conference call is ended
-        List<User> members = userRepository.findAllInConferenceRoomNumber(user.getMeetingRoomId());
+        List<User> members = userRepository.findAllInConferenceRoomNumber(user.getConferenceRoomNumber());
         notifyToUsersThatConferenceCallsAreEnded(members);
 
         // Update the conference call users
