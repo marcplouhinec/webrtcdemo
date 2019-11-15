@@ -1,5 +1,7 @@
 import User from '../model/User.js'
 import userService from '../services/userService.js'
+import UserServerEventCode from '../model/UserServerEventCode.js'
+import CallUserServerEvent from '../model/CallUserServerEvent.js'
 
 const usersPanelController = {
 
@@ -10,8 +12,15 @@ const usersPanelController = {
         // Register a new user
         this._user = await this._registerNewUser();
         userService.subscribeToUserEvents(this._user.id, event => {
-            // TODO
-            console.log('user event: ' + JSON.stringify(event))
+            switch (event.code) {
+                case UserServerEventCode.CONFERENCE_CALL_STARTED:
+                    const callEvent = /** @type {CallUserServerEvent} */ event;
+                    this._onConferenceCallStarted(callEvent.callerUserId, callEvent.otherUserId);
+                    break;
+                case UserServerEventCode.CONFERENCE_CALL_ENDED:
+                    this._onConferenceCallEnded();
+                    break;
+            }
         });
 
         // Load the users and display them
@@ -31,8 +40,7 @@ const usersPanelController = {
             }
             const userId = targetElement.getAttribute('data-user-id');
 
-            // TODO
-            console.log('call ' + userId);
+            this._callOtherUser(Number(userId));
         });
     },
 
@@ -62,6 +70,9 @@ const usersPanelController = {
             new Map()
         );
 
+        const currentUser = users.filter(it => it.id === this._user.id)[0];
+        const currentRoomNumber = currentUser.conferenceRoomNumber;
+
         // Generate HTML content
         const sortedRoomNumbers = [...usersByRoomNumber.keys()].sort((a, b) => a - b);
         const roomsHtmlContent = sortedRoomNumbers
@@ -72,13 +83,14 @@ const usersPanelController = {
                 const usersHtmlContent = roomUsers
                     .map(user => {
                         const isCurrentUser = this._user.id === user.id;
+                        const showCallButton = roomNumber === -1 && !isCurrentUser && !currentRoomNumber;
 
                         return `
                             <li class="user ${isCurrentUser ? 'current-user' : ''}">
                                 <div class="user-name">${user.name} ${isCurrentUser ? '(you)' : ''}</div>
                                 <button class="call-button" 
                                         data-user-id="${user.id}"
-                                        ${isCurrentUser ? 'disabled' : ''}>
+                                        ${showCallButton ? '' : 'disabled'}>
                                     Call
                                 </button>
                             </li>`;
@@ -122,6 +134,33 @@ const usersPanelController = {
         }
 
         return user;
+    },
+
+    /**
+     * @param {Number} otherUserId
+     * @private
+     */
+    async _callOtherUser(otherUserId) {
+        try {
+            await userService.startConferenceCall(this._user.id, otherUserId);
+        } catch (e) {
+            alert(`Error: ${e.message}`);
+        }
+    },
+
+    /**
+     * @param {Number} callerUserId
+     * @param {Number} otherUserId
+     * @private
+     */
+    _onConferenceCallStarted(callerUserId, otherUserId) {
+        console.log('_onConferenceCallStarted ' + callerUserId + ', ' + otherUserId);
+        // TODO
+    },
+
+    _onConferenceCallEnded() {
+        console.log('_onConferenceCallEnded');
+        // TODO
     }
 };
 

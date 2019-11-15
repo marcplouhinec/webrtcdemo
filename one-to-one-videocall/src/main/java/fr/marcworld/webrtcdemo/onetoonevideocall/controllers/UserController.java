@@ -1,9 +1,6 @@
 package fr.marcworld.webrtcdemo.onetoonevideocall.controllers;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.ExitFromConferenceCallResponseCode;
-import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.StartConferenceResponseCode;
-import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.UserServerEvent;
-import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.UserServerEventCode;
+import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.*;
 import fr.marcworld.webrtcdemo.onetoonevideocall.entities.InactiveUserDeletionResult;
 import fr.marcworld.webrtcdemo.onetoonevideocall.entities.User;
 import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
@@ -77,8 +74,14 @@ public class UserController {
                     .body(StartConferenceResponseCode.OTHER_USER_ALREADY_IN_CONFERENCE);
         }
 
-        userRepository.startConferenceCall(callerUserId, otherUserId);
+        List<User> users = userRepository.startConferenceCall(callerUserId, otherUserId);
 
+        sendEventToUsers(
+                new CallUserServerEvent(
+                        UserServerEventCode.CONFERENCE_CALL_STARTED,
+                        callerUserId,
+                        otherUserId),
+                users);
         notifyUsersUpdate();
         return ResponseEntity.ok(StartConferenceResponseCode.SUCCESS);
     }
@@ -99,7 +102,7 @@ public class UserController {
 
         // Warn all conference room members that the conference call is ended
         List<User> members = userRepository.findAllInConferenceRoomNumber(user.getConferenceRoomNumber());
-        notifyToUsersThatConferenceCallsAreEnded(members);
+        sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), members);
 
         // Update the conference call users
         List<Integer> memberIds = members.stream()
@@ -125,7 +128,7 @@ public class UserController {
         InactiveUserDeletionResult result = userRepository.deleteUsersInactiveForOneMinute();
         if (!result.getDeletedUsers().isEmpty()) {
             List<User> otherUsers = result.getOtherUsersInCancelledConferenceCalls();
-            notifyToUsersThatConferenceCallsAreEnded(otherUsers);
+            sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), otherUsers);
 
             notifyUsersUpdate();
         }
@@ -136,11 +139,9 @@ public class UserController {
         userRepository.markUserAsActive(userId);
     }
 
-    private void notifyToUsersThatConferenceCallsAreEnded(List<User> users) {
+    private void sendEventToUsers(UserServerEvent event, List<User> users) {
         for (User user : users) {
-            messagingTemplate.convertAndSend(
-                    "/topic/user" + user.getId(),
-                    new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED));
+            messagingTemplate.convertAndSend("/topic/user-" + user.getId(), event);
         }
     }
 

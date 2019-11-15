@@ -2,6 +2,7 @@ import User from '../model/User.js'
 import StartConferenceResponseCode from '../model/StartConferenceResponseCode.js'
 import ExitFromConferenceCallResponseCode from '../model/ExitFromConferenceCallResponseCode.js'
 import UserServerEvent from '../model/UserServerEvent.js'
+import CallUserServerEvent from '../model/CallUserServerEvent.js'
 import UserServerEventCode from '../model/UserServerEventCode.js'
 
 const userService = {
@@ -117,11 +118,16 @@ const userService = {
         const stompClient = await this._getStompClient();
 
         stompClient.subscribe(`/topic/user-${userId}`, response => {
-            const event = UserServerEvent.fromProperties(JSON.parse(response.body));
+            const properties = JSON.parse(response.body);
+            let event = UserServerEvent.fromProperties(properties);
 
             if (event.code === UserServerEventCode.HEARTBEAT_PING) {
                 stompClient.send(`/app/user-${userId}/heartbeat-pong`, {}, '');
                 return;
+            }
+
+            if (event.code === UserServerEventCode.CONFERENCE_CALL_STARTED) {
+                event = CallUserServerEvent.fromProperties(properties);
             }
 
             listener(event);

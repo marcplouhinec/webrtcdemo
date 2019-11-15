@@ -14,7 +14,10 @@ public interface UserRepository {
 
     User findById(int userId);
 
-    void startConferenceCall(int callerUserId, int otherUserId);
+    /**
+     * @return Users in the conference room.
+     */
+    List<User> startConferenceCall(int callerUserId, int otherUserId);
 
     List<User> findAllInConferenceRoomNumber(int conferenceRoomNumber);
 

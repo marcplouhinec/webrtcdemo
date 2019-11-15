@@ -60,9 +60,10 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void startConferenceCall(int callerUserId, int otherUserId) {
+    public List<User> startConferenceCall(int callerUserId, int otherUserId) {
         synchronized (userById) {
             OptionalInt maxRoomNumber = userById.values().stream()
+                    .filter(it -> it.getConferenceRoomNumber() != null)
                     .mapToInt(User::getConferenceRoomNumber)
                     .max();
             int newRoomNumber = maxRoomNumber.orElse(0) + 1;
@@ -75,6 +76,8 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
             callerUser.setLastUpdateDateTime(ZonedDateTime.now());
             otherUser.setLastUpdateDateTime(ZonedDateTime.now());
+
+            return Arrays.asList(copy(callerUser), copy(otherUser));
         }
     }
 
