@@ -45,6 +45,16 @@ const userService = {
     },
 
     /**
+     * @param {Number} userId
+     * @return {Promise<User>}
+     */
+    async findUserById(userId) {
+        const response = await fetch(`/users/${userId}`, {method: 'GET'});
+        const properties = await response.json();
+        return User.fromProperties(properties);
+    },
+
+    /**
      * @param {Number} callerUserId
      * @param {Number} otherUserId
      * @return {Promise<void>}

@@ -47,7 +47,7 @@ body {
     max-width: 100%;
 }
 
-#conversation-panel {
+#conference-panel {
     flex: 1;
     flex-direction: column;
     display: none;

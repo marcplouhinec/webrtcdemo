@@ -43,6 +43,15 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+    public ResponseEntity<User> findUserById(@PathVariable int id) {
+        User user = userRepository.findById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
+    }
+
     @RequestMapping(value = "/users/{callerUserId}/start-conference-call", method = RequestMethod.POST)
     public ResponseEntity<StartConferenceResponseCode> startConferenceCall(
             @PathVariable int callerUserId,

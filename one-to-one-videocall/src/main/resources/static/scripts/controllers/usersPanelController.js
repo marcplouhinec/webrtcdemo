@@ -2,6 +2,7 @@ import User from '../model/User.js'
 import userService from '../services/userService.js'
 import UserServerEventCode from '../model/UserServerEventCode.js'
 import CallUserServerEvent from '../model/CallUserServerEvent.js'
+import conferencePanelController from './conferencePanelController.js';
 
 const usersPanelController = {
 
@@ -15,10 +16,12 @@ const usersPanelController = {
             switch (event.code) {
                 case UserServerEventCode.CONFERENCE_CALL_STARTED:
                     const callEvent = /** @type {CallUserServerEvent} */ event;
-                    this._onConferenceCallStarted(callEvent.callerUserId, callEvent.otherUserId);
+                    conferencePanelController.onConferenceCallStarted(
+                        callEvent.callerUserId,
+                        callEvent.otherUserId);
                     break;
                 case UserServerEventCode.CONFERENCE_CALL_ENDED:
-                    this._onConferenceCallEnded();
+                    conferencePanelController.onConferenceCallEnded();
                     break;
             }
         });
@@ -146,21 +149,6 @@ const usersPanelController = {
         } catch (e) {
             alert(`Error: ${e.message}`);
         }
-    },
-
-    /**
-     * @param {Number} callerUserId
-     * @param {Number} otherUserId
-     * @private
-     */
-    _onConferenceCallStarted(callerUserId, otherUserId) {
-        console.log('_onConferenceCallStarted ' + callerUserId + ', ' + otherUserId);
-        // TODO
-    },
-
-    _onConferenceCallEnded() {
-        console.log('_onConferenceCallEnded');
-        // TODO
     }
 };
 
