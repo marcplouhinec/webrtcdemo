@@ -44,10 +44,12 @@ const conferencePanelController = {
         const participants = [callerUser, otherUser];
         this._participantMiniaturesPanel.innerHTML = participants
             .map(participant => {
+                const isMuted = participant.id === this._currentUserId;
+
                 return `<div class="participant-miniature">
                     <video class="participant-miniature-video"
                            id="participant-miniature-video-${participant.id}"
-                           autoplay="autoplay"></video>
+                           autoplay="autoplay" ${isMuted ? 'muted="muted"' : ''}></video>
                     <div class="participant-miniature-name">${participant.name}</div>
                 </div>`;
             })
@@ -138,6 +140,9 @@ const conferencePanelController = {
         this._peerConnection.addEventListener('icecandidate', event => {
             this._sendIceCandidateToOtherUser(event.candidate, otherUserId);
         });
+        this._peerConnection.addEventListener('track', event => {
+            this._handleReceivedStream(event.streams[0], otherUserId);
+        });
 
         this._localVideoStream.getTracks().forEach(track => {
             this._peerConnection.addTrack(track, this._localVideoStream);
@@ -176,6 +181,9 @@ const conferencePanelController = {
 
         this._peerConnection.addEventListener('icecandidate', event => {
             this._sendIceCandidateToOtherUser(event.candidate, offerSenderUserId);
+        });
+        this._peerConnection.addEventListener('track', event => {
+            this._handleReceivedStream(event.streams[0], offerSenderUserId);
         });
 
         await this._peerConnection.setRemoteDescription(offerDescription);
@@ -220,6 +228,16 @@ const conferencePanelController = {
     async _handleReceivedIceCandidate(iceCandidate, iceCandidateSenderUserId) {
         await this._peerConnection.addIceCandidate(iceCandidate);
     },
+
+    /**
+     * @param {MediaStream} mediaStream
+     * @param {Number} streamSenderUserId
+     * @private
+     */
+    _handleReceivedStream(mediaStream, streamSenderUserId) {
+        const videoElement = document.getElementById(`participant-miniature-video-${streamSenderUserId}`);
+        videoElement.srcObject = mediaStream;
+    }
 };
 
 export default conferencePanelController;
