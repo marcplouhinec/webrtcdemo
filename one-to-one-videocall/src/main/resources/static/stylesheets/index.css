@@ -52,6 +52,7 @@ body {
     display: flex;
     flex-direction: column;
     max-width: 100%;
+    position: relative;
 }
 
 /* Tablets and bigger */

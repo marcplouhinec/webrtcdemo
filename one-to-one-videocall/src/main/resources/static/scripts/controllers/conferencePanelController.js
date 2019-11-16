@@ -16,6 +16,8 @@ const conferencePanelController = {
         this._selectedParticipantPanel.style.display = 'none';
         this._participantMiniaturesPanel.style.display = 'none';
 
+        this._showMessage('Please call an user to start a conference call.');
+
         const exitConferenceButton = document.getElementById('exit-from-conference');
         exitConferenceButton.addEventListener('click', () => {
             this._exitFromConference();
@@ -43,6 +45,7 @@ const conferencePanelController = {
             })
             .join('\n');
 
+        this._showMessage('');
         this._selectedParticipantPanel.style.display = 'flex';
         this._participantMiniaturesPanel.style.display = 'flex';
     },
@@ -51,6 +54,18 @@ const conferencePanelController = {
         this._participantMiniaturesPanel.innerHTML = '';
         this._selectedParticipantPanel.style.display = 'none';
         this._participantMiniaturesPanel.style.display = 'none';
+        this._showMessage('Conference call ended.');
+    },
+
+    /**
+     * @param {String} message
+     * @private
+     */
+    _showMessage(message) {
+        const messageElement = document.getElementById('conference-panel-message');
+
+        messageElement.innerText = message;
+        messageElement.style.display = message ? 'block' : 'none';
     },
 
     async _exitFromConference() {

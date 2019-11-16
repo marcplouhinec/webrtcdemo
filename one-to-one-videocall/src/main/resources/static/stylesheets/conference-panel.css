@@ -45,3 +45,10 @@
     justify-content: center;
     padding-top: 4px;
 }
+
+#conference-panel-message {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
