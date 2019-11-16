@@ -161,6 +161,19 @@ public class UserController {
         userRepository.markUserAsActive(userId);
     }
 
+    @MessageMapping("/user-{userId}/forward-message-to-{otherUserId}")
+    public void forwardMessage(
+            @DestinationVariable int userId,
+            @DestinationVariable int otherUserId,
+            PeerMessage peerMessage) {
+
+        LOGGER.info("Forward a message from the users {} to {}: {}", userId, otherUserId, peerMessage);
+
+        messagingTemplate.convertAndSend(
+                "/topic/user-" + otherUserId,
+                new UserServerEvent<>(UserServerEventCode.PEER_MESSAGE_SENT, peerMessage));
+    }
+
     private void sendEventToUsers(UserServerEvent event, List<User> users) {
         for (User user : users) {
             messagingTemplate.convertAndSend("/topic/user-" + user.getId(), event);

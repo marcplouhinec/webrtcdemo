@@ -2,6 +2,7 @@ import User from '../model/User.js'
 import userService from '../services/userService.js'
 import UserServerEventCode from '../model/UserServerEventCode.js'
 import CallUserServerEvent from '../model/CallUserServerEvent.js'
+import PeerMessage from '../model/PeerMessage.js'
 import conferencePanelController from './conferencePanelController.js';
 
 const usersPanelController = {
@@ -23,6 +24,10 @@ const usersPanelController = {
                     break;
                 case UserServerEventCode.CONFERENCE_CALL_ENDED:
                     conferencePanelController.onConferenceCallEnded();
+                    break;
+                case UserServerEventCode.PEER_MESSAGE_SENT:
+                    conferencePanelController.onPeerMessageReceived(
+                        PeerMessage.fromProperties(event.payload));
                     break;
             }
         });

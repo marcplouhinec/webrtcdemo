@@ -4,6 +4,7 @@ import ExitFromConferenceCallResponseCode from '../model/ExitFromConferenceCallR
 import UserServerEvent from '../model/UserServerEvent.js'
 import CallUserServerEvent from '../model/CallUserServerEvent.js'
 import UserServerEventCode from '../model/UserServerEventCode.js'
+import PeerMessage from '../model/PeerMessage.js'
 
 const userService = {
 
@@ -142,6 +143,20 @@ const userService = {
 
             listener(event);
         });
+    },
+
+    /**
+     * @param {PeerMessage} message
+     * @param {Number} otherUserId
+     * @return {Promise<void>}
+     */
+    async sendMessageToOtherUser(message, otherUserId) {
+        const stompClient = await this._getStompClient();
+
+        stompClient.send(
+            `/app/user-${message.senderUserId}/forward-message-to-${otherUserId}`,
+            {},
+            JSON.stringify(message));
     },
 
     /**
