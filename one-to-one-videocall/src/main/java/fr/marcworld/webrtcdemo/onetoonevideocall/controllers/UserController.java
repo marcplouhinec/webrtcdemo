@@ -93,10 +93,9 @@ public class UserController {
         LOGGER.info("Conference call started with the users {} (room number: {}).", users, roomNumber);
 
         sendEventToUsers(
-                new CallUserServerEvent(
+                new UserServerEvent<>(
                         UserServerEventCode.CONFERENCE_CALL_STARTED,
-                        callerUserId,
-                        otherUserId),
+                        new ConferenceCall(callerUserId, otherUserId, roomNumber)),
                 users);
         notifyUsersUpdate();
         return ResponseEntity.ok(StartConferenceResponseCode.SUCCESS);

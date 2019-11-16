@@ -1,18 +1,18 @@
 package fr.marcworld.webrtcdemo.onetoonevideocall.dtos;
 
-public class CallUserServerEvent extends UserServerEvent {
+public class ConferenceCall {
 
     private int callerUserId;
     private int otherUserId;
+    private int roomNumber;
 
-    public CallUserServerEvent() {
-        super();
+    public ConferenceCall() {
     }
 
-    public CallUserServerEvent(UserServerEventCode code, int callerUserId, int otherUserId) {
-        super(code);
+    public ConferenceCall(int callerUserId, int otherUserId, int roomNumber) {
         this.callerUserId = callerUserId;
         this.otherUserId = otherUserId;
+        this.roomNumber = roomNumber;
     }
 
     public int getCallerUserId() {
@@ -29,5 +29,13 @@ public class CallUserServerEvent extends UserServerEvent {
 
     public void setOtherUserId(int otherUserId) {
         this.otherUserId = otherUserId;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
     }
 }

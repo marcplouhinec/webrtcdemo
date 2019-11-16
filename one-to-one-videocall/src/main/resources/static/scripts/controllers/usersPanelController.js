@@ -1,7 +1,7 @@
 import User from '../model/User.js'
 import userService from '../services/userService.js'
 import UserServerEventCode from '../model/UserServerEventCode.js'
-import CallUserServerEvent from '../model/CallUserServerEvent.js'
+import ConferenceCall from '../model/ConferenceCall.js'
 import PeerMessage from '../model/PeerMessage.js'
 import conferencePanelController from './conferencePanelController.js';
 
@@ -16,10 +16,10 @@ const usersPanelController = {
         userService.subscribeToUserEvents(this._user.id, event => {
             switch (event.code) {
                 case UserServerEventCode.CONFERENCE_CALL_STARTED:
-                    const callEvent = /** @type {CallUserServerEvent} */ event;
+                    const conferenceCall = ConferenceCall.fromProperties(event.payload);
                     conferencePanelController.onConferenceCallStarted(
-                        callEvent.callerUserId,
-                        callEvent.otherUserId,
+                        conferenceCall.callerUserId,
+                        conferenceCall.otherUserId,
                         this._user.id);
                     break;
                 case UserServerEventCode.CONFERENCE_CALL_ENDED:
