@@ -1,4 +1,5 @@
 import usersPanelController from './usersPanelController.js';
+import conferencePanelController from './conferencePanelController.js';
 
 const indexController = {
 
@@ -16,7 +17,8 @@ const indexController = {
         this._showPreviousPanelButton = document.getElementById('show-previous-panel');
         this._showNextPanelButton = document.getElementById('show-next-panel');
         this._contentPanelElements = document.getElementsByClassName('content-panel');
-        const isMobileDevice = this._showPreviousPanelButton.style.display !== 'none';
+        const isMobileDevice = window.getComputedStyle(this._showPreviousPanelButton, null)
+            .getPropertyValue('display') !== 'none';
 
         if (isMobileDevice) {
             this._displayActiveContentPanel();
@@ -33,6 +35,7 @@ const indexController = {
         }
 
         // Initialize other controllers
+        conferencePanelController.init();
         usersPanelController.init();
 
         /*

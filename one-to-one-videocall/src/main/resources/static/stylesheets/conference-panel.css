@@ -1,11 +1,11 @@
-#main-speaker-panel {
+#selected-participant-panel {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#main-speaker-video {
+#selected-participant-video {
     height: 240px;
     width: 320px;
     max-width: 100%;
@@ -13,26 +13,26 @@
     background-color: black;
 }
 
-#speaker-miniatures-panel {
+#participant-miniatures-panel {
     display: flex;
     overflow-x: auto;
     padding-left: 8px;
     padding-right: 8px;
 }
 
-.speaker-miniature {
+.participant-miniature {
     display: flex;
     flex-direction: column;
     padding: 8px 4px;
 }
 
-.speaker-miniature-video {
+.participant-miniature-video {
     width: 160px;
     height: 120px;
     background-color: black;
 }
 
-.speaker-miniature-name {
+.participant-miniature-name {
     display: flex;
     justify-content: center;
     padding-top: 4px;

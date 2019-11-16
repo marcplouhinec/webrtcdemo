@@ -2,6 +2,19 @@ import userService from '../services/userService.js'
 
 const conferencePanelController = {
 
+    /** @type {HTMLElement} */
+    _selectedParticipantPanel: null,
+    /** @type {HTMLElement} */
+    _participantMiniaturesPanel: null,
+
+    init() {
+        this._selectedParticipantPanel = document.getElementById('selected-participant-panel');
+        this._participantMiniaturesPanel = document.getElementById('participant-miniatures-panel');
+
+        this._selectedParticipantPanel.style.display = 'none';
+        this._participantMiniaturesPanel.style.display = 'none';
+    },
+
     /**
      * @param {Number} callerUserId
      * @param {Number} otherUserId

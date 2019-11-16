@@ -39,7 +39,7 @@ body {
 
 #users-panel {
     flex: 1;
-    display: none;
+    display: flex;
     flex-direction: column;
     border-right: 1px solid white;
     padding-left: 8px;
@@ -49,15 +49,15 @@ body {
 
 #conference-panel {
     flex: 1;
+    display: flex;
     flex-direction: column;
-    display: none;
     max-width: 100%;
 }
 
 /* Tablets and bigger */
 @media (min-width: 768px) {
     #users-panel {
-        flex: none;
+        flex: initial;
         min-width: 324px;
     }
 
