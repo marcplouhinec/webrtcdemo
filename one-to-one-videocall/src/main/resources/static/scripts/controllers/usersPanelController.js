@@ -18,7 +18,8 @@ const usersPanelController = {
                     const callEvent = /** @type {CallUserServerEvent} */ event;
                     conferencePanelController.onConferenceCallStarted(
                         callEvent.callerUserId,
-                        callEvent.otherUserId);
+                        callEvent.otherUserId,
+                        this._user.id);
                     break;
                 case UserServerEventCode.CONFERENCE_CALL_ENDED:
                     conferencePanelController.onConferenceCallEnded();

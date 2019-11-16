@@ -3,6 +3,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 #selected-participant-video {
@@ -11,6 +12,13 @@
     max-width: 100%;
     max-height: 100%;
     background-color: black;
+}
+
+#exit-from-conference {
+    position: absolute;
+    bottom: 24px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #participant-miniatures-panel {
