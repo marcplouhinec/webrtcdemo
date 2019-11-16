@@ -69,10 +69,12 @@ const conferencePanelController = {
         if (this._peerConnection) {
             this._peerConnection.close();
         }
+        // remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+        const videoElements = document.getElementsByClassName('participant-miniature-video');
+        for (let videoElement of videoElements) {
+            videoElement.srcObject.getTracks().forEach(track => track.stop());
+        }
         if (this._localVideoStream) {
-            this._localVideoStream.getTracks().forEach(track => {
-                track.stop();
-            });
             this._localVideoStream = null;
         }
 
