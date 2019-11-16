@@ -5,6 +5,8 @@ import fr.marcworld.webrtcdemo.onetoonevideocall.entities.InactiveUserDeletionRe
 import fr.marcworld.webrtcdemo.onetoonevideocall.entities.User;
 import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
 import fr.marcworld.webrtcdemo.onetoonevideocall.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @RestController
 public class UserController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -31,6 +35,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
             User createdUser = userRepository.create(user);
+            LOGGER.info("User {} created.", createdUser);
             notifyUsersUpdate();
             return ResponseEntity.ok(createdUser);
         } catch (UserAlreadyExistsException e) {
@@ -84,6 +89,8 @@ public class UserController {
         }
 
         List<User> users = userRepository.startConferenceCall(callerUserId, otherUserId);
+        Integer roomNumber = users.get(0).getConferenceRoomNumber();
+        LOGGER.info("Conference call started with the users {} (room number: {}).", users, roomNumber);
 
         sendEventToUsers(
                 new CallUserServerEvent(
@@ -103,14 +110,15 @@ public class UserController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(ExitFromConferenceCallResponseCode.UNKNOWN_USER_ID);
         }
-        if (user.getConferenceRoomNumber() == null) {
+        Integer roomNumber = user.getConferenceRoomNumber();
+        if (roomNumber == null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(ExitFromConferenceCallResponseCode.USER_NOT_IN_CONFERENCE_CALL);
         }
 
         // Warn all conference room members that the conference call is ended
-        List<User> members = userRepository.findAllInConferenceRoomNumber(user.getConferenceRoomNumber());
+        List<User> members = userRepository.findAllInConferenceRoomNumber(roomNumber);
         sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), members);
 
         // Update the conference call users
@@ -119,6 +127,7 @@ public class UserController {
                 .collect(Collectors.toList());
         userRepository.exitFromConferenceCall(memberIds);
 
+        LOGGER.info("Conference call ended (users: {}, room number: {}).", members, roomNumber);
         notifyUsersUpdate();
         return ResponseEntity.ok(ExitFromConferenceCallResponseCode.SUCCESS);
     }
@@ -139,6 +148,10 @@ public class UserController {
             List<User> otherUsers = result.getOtherUsersInCancelledConferenceCalls();
             sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), otherUsers);
 
+            LOGGER.info("Inactive users purged: {}. " +
+                            "Cancelled conference room numbers: {}. " +
+                            "Impacted active users: {}.",
+                    result.getDeletedUsers(), result.getCancelledConferenceRoomNumbers(), otherUsers);
             notifyUsersUpdate();
         }
     }
