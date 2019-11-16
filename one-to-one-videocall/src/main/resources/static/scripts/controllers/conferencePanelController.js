@@ -8,6 +8,8 @@ const conferencePanelController = {
     _participantMiniaturesPanel: null,
     /** @type {Number} */
     _currentUserId: null,
+    /** @type {MediaStream} */
+    _localVideoStream: null,
 
     init() {
         this._selectedParticipantPanel = document.getElementById('selected-participant-panel');
@@ -39,7 +41,9 @@ const conferencePanelController = {
         this._participantMiniaturesPanel.innerHTML = participants
             .map(participant => {
                 return `<div class="participant-miniature">
-                    <div class="participant-miniature-video"></div>
+                    <video class="participant-miniature-video"
+                           id="participant-miniature-video-${participant.id}"
+                           autoplay="autoplay"></video>
                     <div class="participant-miniature-name">${participant.name}</div>
                 </div>`;
             })
@@ -48,9 +52,28 @@ const conferencePanelController = {
         this._showMessage('');
         this._selectedParticipantPanel.style.display = 'flex';
         this._participantMiniaturesPanel.style.display = 'flex';
+
+        // Open the local video stream
+        /**
+         *
+         * @type {MediaStream}
+         */
+        this._localVideoStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        });
+        const videoElement = document.getElementById(`participant-miniature-video-${this._currentUserId}`);
+        videoElement.srcObject = this._localVideoStream;
     },
 
     onConferenceCallEnded() {
+        if (this._localVideoStream) {
+            this._localVideoStream.getTracks().forEach(track => {
+                track.stop();
+            });
+            this._localVideoStream = null;
+        }
+
         this._participantMiniaturesPanel.innerHTML = '';
         this._selectedParticipantPanel.style.display = 'none';
         this._participantMiniaturesPanel.style.display = 'none';
@@ -75,7 +98,6 @@ const conferencePanelController = {
             alert(`Error: ${e.message}`);
         }
     }
-
 };
 
 export default conferencePanelController;
