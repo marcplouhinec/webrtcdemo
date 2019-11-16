@@ -26,7 +26,7 @@ public interface UserRepository {
     /**
      * @return Deleted users.
      */
-    InactiveUserDeletionResult deleteUsersInactiveForOneMinute();
+    InactiveUserDeletionResult deleteUsersInactiveForTwentySeconds();
 
     void markUserAsActive(int userId);
 

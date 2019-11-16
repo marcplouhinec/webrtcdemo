@@ -106,13 +106,13 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public InactiveUserDeletionResult deleteUsersInactiveForOneMinute() {
-        ZonedDateTime oneMinAgo = ZonedDateTime.now().minus(1, ChronoUnit.MINUTES);
+    public InactiveUserDeletionResult deleteUsersInactiveForTwentySeconds() {
+        ZonedDateTime twentySecondsAgo = ZonedDateTime.now().minus(20, ChronoUnit.SECONDS);
 
         synchronized (userById) {
             // Find the users to delete
             Set<User> inactiveUsers = userById.values().stream()
-                    .filter(it -> it.getLastUpdateDateTime().isBefore(oneMinAgo))
+                    .filter(it -> it.getLastUpdateDateTime().isBefore(twentySecondsAgo))
                     .map(this::copy)
                     .collect(Collectors.toSet());
 
@@ -126,7 +126,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
             List<User> impactedUsers = userById.values().stream()
                     .filter(it -> it.getConferenceRoomNumber() != null)
                     .filter(it -> conferenceRoomNumbers.contains(it.getConferenceRoomNumber()))
-                    .filter(inactiveUsers::contains)
+                    .filter(it -> !inactiveUsers.contains(it))
                     .collect(Collectors.toList());
 
             // Cancel the conference calls of the impacted users

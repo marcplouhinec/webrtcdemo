@@ -123,7 +123,7 @@ public class UserController {
         return ResponseEntity.ok(ExitFromConferenceCallResponseCode.SUCCESS);
     }
 
-    @Scheduled(fixedDelay = 20000)
+    @Scheduled(fixedDelay = 10000)
     public void purgeDisconnectedUsers() {
         // Send a heartbeat ping message to all users
         List<User> users = userRepository.findAll();
@@ -134,7 +134,7 @@ public class UserController {
         }
 
         // Delete inactive users
-        InactiveUserDeletionResult result = userRepository.deleteUsersInactiveForOneMinute();
+        InactiveUserDeletionResult result = userRepository.deleteUsersInactiveForTwentySeconds();
         if (!result.getDeletedUsers().isEmpty()) {
             List<User> otherUsers = result.getOtherUsersInCancelledConferenceCalls();
             sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), otherUsers);
