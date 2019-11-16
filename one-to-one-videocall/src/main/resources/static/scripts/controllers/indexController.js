@@ -64,24 +64,6 @@ const indexController = {
             const nextName = nextElement.getAttribute('data-nav-name');
             this._showNextPanelButton.textContent = nextName + ' >';
         }
-    },
-
-    /**
-     * @return {Promise<MediaStream>}
-     * @private
-     */
-    async _openLocalVideo() {
-        const localVideoElement = document.getElementById('local-video');
-
-        try {
-            return localVideoElement.srcObject = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
-        } catch (error) {
-            console.log(error);
-            alert('Error: unable to open the local video.');
-        }
     }
 
 };

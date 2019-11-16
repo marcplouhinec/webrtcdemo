@@ -8,6 +8,8 @@ const conferencePanelController = {
     _selectedParticipantPanel: null,
     /** @type {HTMLElement} */
     _participantMiniaturesPanel: null,
+    /** @type {HTMLVideoElement} */
+    _selectedParticipantVideo: null,
     /** @type {Number} */
     _currentUserId: null,
     /** @type {MediaStream} */
@@ -18,15 +20,27 @@ const conferencePanelController = {
     init() {
         this._selectedParticipantPanel = document.getElementById('selected-participant-panel');
         this._participantMiniaturesPanel = document.getElementById('participant-miniatures-panel');
+        this._selectedParticipantVideo = document.getElementById('selected-participant-video');
 
         this._selectedParticipantPanel.style.display = 'none';
         this._participantMiniaturesPanel.style.display = 'none';
 
         this._showMessage('Please call an user to start a conference call.');
 
+        // Handle hang up event
         const exitConferenceButton = document.getElementById('exit-from-conference');
         exitConferenceButton.addEventListener('click', () => {
             this._exitFromConference();
+        });
+
+        // Handle participant miniature selection
+        this._participantMiniaturesPanel.addEventListener('click', event => {
+            const targetElement = /** @type {HTMLElement} */ event.target;
+
+            const userId = targetElement.getAttribute('data-user-id');
+            if (userId) {
+                this._selectParticipantMiniature(Number(userId));
+            }
         });
     },
 
@@ -46,11 +60,16 @@ const conferencePanelController = {
             .map(participant => {
                 const isMuted = participant.id === this._currentUserId;
 
-                return `<div class="participant-miniature">
+                return `<div class="participant-miniature"
+                             id="participant-miniature-${participant.id}"
+                             data-user-id="${participant.id}">
                     <video class="participant-miniature-video"
                            id="participant-miniature-video-${participant.id}"
-                           autoplay="autoplay" ${isMuted ? 'muted="muted"' : ''}></video>
-                    <div class="participant-miniature-name">${participant.name}</div>
+                           autoplay="autoplay"
+                           ${isMuted ? 'muted="muted"' : ''}
+                           data-user-id="${participant.id}"></video>
+                    <div class="participant-miniature-name"
+                         data-user-id="${participant.id}">${participant.name}</div>
                 </div>`;
             })
             .join('\n');
@@ -69,7 +88,7 @@ const conferencePanelController = {
         if (this._peerConnection) {
             this._peerConnection.close();
         }
-        // remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+
         const videoElements = document.getElementsByClassName('participant-miniature-video');
         for (let videoElement of videoElements) {
             videoElement.srcObject.getTracks().forEach(track => track.stop());
@@ -77,6 +96,9 @@ const conferencePanelController = {
         if (this._localVideoStream) {
             this._localVideoStream = null;
         }
+
+        this._selectedParticipantVideo.pause();
+        this._selectedParticipantVideo.srcObject = null;
 
         this._participantMiniaturesPanel.innerHTML = '';
         this._selectedParticipantPanel.style.display = 'none';
@@ -132,6 +154,7 @@ const conferencePanelController = {
         });
         const videoElement = document.getElementById(`participant-miniature-video-${this._currentUserId}`);
         videoElement.srcObject = this._localVideoStream;
+        this._selectParticipantMiniature(this._currentUserId);
 
         // Create a WebRTC peer connection
         this._peerConnection = new RTCPeerConnection(null); // TODO get the configuration from the server
@@ -239,6 +262,30 @@ const conferencePanelController = {
     _handleReceivedStream(mediaStream, streamSenderUserId) {
         const videoElement = document.getElementById(`participant-miniature-video-${streamSenderUserId}`);
         videoElement.srcObject = mediaStream;
+        this._selectParticipantMiniature(streamSenderUserId);
+    },
+
+    /**
+     * @param {Number} userId
+     * @private
+     */
+    _selectParticipantMiniature(userId) {
+        const miniatureElements = document.getElementsByClassName('participant-miniature');
+        for (let miniatureElement of miniatureElements) {
+            const miniatureUserId = Number(miniatureElement.getAttribute('data-user-id'));
+
+            if (miniatureUserId === userId) {
+                miniatureElement.classList.add('selected-participant');
+            } else {
+                miniatureElement.classList.remove('selected-participant');
+            }
+        }
+
+        const videoElement = document.getElementById(`participant-miniature-video-${userId}`);
+        this._selectedParticipantVideo.srcObject = videoElement.srcObject;
+        this._selectedParticipantVideo.play();
+
+        this._selectedParticipantVideo.style.height = (this._selectedParticipantPanel.clientHeight * .8) + 'px';
     }
 };
 
