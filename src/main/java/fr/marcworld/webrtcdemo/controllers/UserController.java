@@ -1,7 +1,6 @@
 package fr.marcworld.webrtcdemo.controllers;
 
 import fr.marcworld.webrtcdemo.dtos.*;
-import fr.marcworld.webrtcdemo.entities.InactiveUserDeletionResult;
 import fr.marcworld.webrtcdemo.entities.User;
 import fr.marcworld.webrtcdemo.exceptions.UserAlreadyExistsException;
 import fr.marcworld.webrtcdemo.repositories.UserRepository;
@@ -34,7 +33,7 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
-            User createdUser = userRepository.create(user);
+            var createdUser = userRepository.create(user);
             LOGGER.info("User {} created.", createdUser);
             notifyUsersUpdate();
             return ResponseEntity.ok(createdUser);
@@ -50,7 +49,7 @@ public class UserController {
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> findUserById(@PathVariable int id) {
-        User user = userRepository.findById(id);
+        var user = userRepository.findById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
@@ -62,7 +61,7 @@ public class UserController {
             @PathVariable int callerUserId,
             @RequestBody int otherUserId) {
 
-        User callerUser = userRepository.findById(callerUserId);
+        var callerUser = userRepository.findById(callerUserId);
         if (callerUser == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -75,7 +74,7 @@ public class UserController {
                     .body(StartConferenceResponseCode.CALLER_USER_ALREADY_IN_CONFERENCE);
         }
 
-        User otherUser = userRepository.findById(otherUserId);
+        var otherUser = userRepository.findById(otherUserId);
         if (otherUser == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -88,8 +87,8 @@ public class UserController {
                     .body(StartConferenceResponseCode.OTHER_USER_ALREADY_IN_CONFERENCE);
         }
 
-        List<User> users = userRepository.startConferenceCall(callerUserId, otherUserId);
-        Integer roomNumber = users.get(0).getConferenceRoomNumber();
+        var users = userRepository.startConferenceCall(callerUserId, otherUserId);
+        var roomNumber = users.get(0).getConferenceRoomNumber();
         LOGGER.info("Conference call started with the users {} (room number: {}).", users, roomNumber);
 
         sendEventToUsers(
@@ -103,13 +102,13 @@ public class UserController {
 
     @RequestMapping(value = "/users/{userId}/exit-from-conference-call", method = RequestMethod.POST)
     public ResponseEntity<ExitFromConferenceCallResponseCode> exitFromConferenceCall(@PathVariable int userId) {
-        User user = userRepository.findById(userId);
+        var user = userRepository.findById(userId);
         if (user == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(ExitFromConferenceCallResponseCode.UNKNOWN_USER_ID);
         }
-        Integer roomNumber = user.getConferenceRoomNumber();
+        var roomNumber = user.getConferenceRoomNumber();
         if (roomNumber == null) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -117,11 +116,11 @@ public class UserController {
         }
 
         // Warn all conference room members that the conference call is ended
-        List<User> members = userRepository.findAllInConferenceRoomNumber(roomNumber);
+        var members = userRepository.findAllInConferenceRoomNumber(roomNumber);
         sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), members);
 
         // Update the conference call users
-        List<Integer> memberIds = members.stream()
+        var memberIds = members.stream()
                 .map(User::getId)
                 .collect(Collectors.toList());
         userRepository.exitFromConferenceCall(memberIds);
@@ -134,17 +133,17 @@ public class UserController {
     @Scheduled(fixedDelay = 10000)
     public void purgeDisconnectedUsers() {
         // Send a heartbeat ping message to all users
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
+        var users = userRepository.findAll();
+        for (var user : users) {
             messagingTemplate.convertAndSend(
                     "/topic/user-" + user.getId(),
                     new UserServerEvent(UserServerEventCode.HEARTBEAT_PING));
         }
 
         // Delete inactive users
-        InactiveUserDeletionResult result = userRepository.deleteUsersInactiveForTwentySeconds();
+        var result = userRepository.deleteUsersInactiveForTwentySeconds();
         if (!result.getDeletedUsers().isEmpty()) {
-            List<User> otherUsers = result.getOtherUsersInCancelledConferenceCalls();
+            var otherUsers = result.getOtherUsersInCancelledConferenceCalls();
             sendEventToUsers(new UserServerEvent(UserServerEventCode.CONFERENCE_CALL_ENDED), otherUsers);
 
             LOGGER.info("Inactive users purged: {}. " +
@@ -174,13 +173,13 @@ public class UserController {
     }
 
     private void sendEventToUsers(UserServerEvent event, List<User> users) {
-        for (User user : users) {
+        for (var user : users) {
             messagingTemplate.convertAndSend("/topic/user-" + user.getId(), event);
         }
     }
 
     private void notifyUsersUpdate() {
-        List<User> users = userRepository.findAll();
+        var users = userRepository.findAll();
         messagingTemplate.convertAndSend("/topic/users", users);
     }
 }
