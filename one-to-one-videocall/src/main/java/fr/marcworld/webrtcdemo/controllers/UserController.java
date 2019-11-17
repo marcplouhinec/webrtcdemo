@@ -1,10 +1,10 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.controllers;
+package fr.marcworld.webrtcdemo.controllers;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.dtos.*;
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.InactiveUserDeletionResult;
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.User;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.repositories.UserRepository;
+import fr.marcworld.webrtcdemo.dtos.*;
+import fr.marcworld.webrtcdemo.entities.InactiveUserDeletionResult;
+import fr.marcworld.webrtcdemo.entities.User;
+import fr.marcworld.webrtcdemo.exceptions.UserAlreadyExistsException;
+import fr.marcworld.webrtcdemo.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

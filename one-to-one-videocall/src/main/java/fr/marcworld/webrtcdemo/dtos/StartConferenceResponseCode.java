@@ -1,4 +1,4 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.dtos;
+package fr.marcworld.webrtcdemo.dtos;
 
 public enum StartConferenceResponseCode {
     SUCCESS,

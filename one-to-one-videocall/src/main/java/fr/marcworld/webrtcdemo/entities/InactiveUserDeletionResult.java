@@ -1,4 +1,4 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.entities;
+package fr.marcworld.webrtcdemo.entities;
 
 import java.util.List;
 

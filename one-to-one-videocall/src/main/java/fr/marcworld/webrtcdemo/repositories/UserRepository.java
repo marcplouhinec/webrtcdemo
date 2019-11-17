@@ -1,8 +1,8 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.repositories;
+package fr.marcworld.webrtcdemo.repositories;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.InactiveUserDeletionResult;
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.User;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
+import fr.marcworld.webrtcdemo.entities.InactiveUserDeletionResult;
+import fr.marcworld.webrtcdemo.entities.User;
+import fr.marcworld.webrtcdemo.exceptions.UserAlreadyExistsException;
 
 import java.util.List;
 

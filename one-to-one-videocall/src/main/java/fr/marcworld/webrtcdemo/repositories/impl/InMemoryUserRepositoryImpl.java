@@ -1,9 +1,9 @@
-package fr.marcworld.webrtcdemo.onetoonevideocall.repositories.impl;
+package fr.marcworld.webrtcdemo.repositories.impl;
 
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.InactiveUserDeletionResult;
-import fr.marcworld.webrtcdemo.onetoonevideocall.entities.User;
-import fr.marcworld.webrtcdemo.onetoonevideocall.exceptions.UserAlreadyExistsException;
-import fr.marcworld.webrtcdemo.onetoonevideocall.repositories.UserRepository;
+import fr.marcworld.webrtcdemo.entities.InactiveUserDeletionResult;
+import fr.marcworld.webrtcdemo.entities.User;
+import fr.marcworld.webrtcdemo.exceptions.UserAlreadyExistsException;
+import fr.marcworld.webrtcdemo.repositories.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
