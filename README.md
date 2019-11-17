@@ -129,7 +129,7 @@ mvn clean package
 # Configure the Terraform scripts
 export ALICLOUD_ACCESS_KEY="your-accesskey-id"
 export ALICLOUD_SECRET_KEY="your-accesskey-secret"
-export ALICLOUD_REGION="your-region-id"
+export ALICLOUD_REGION="your-region-id" # see https://www.alibabacloud.com/help/doc-detail/40654.htm
 
 # Top domain name
 export TF_VAR_domain_name="my-example-domain.xyz"
@@ -165,10 +165,18 @@ terraform apply
 You can test the web application by browsing to its URL (e.g. https://webrtcdemo.my-example-domain.xyz).
 
 ## External dependencies
+Framework and libraries:
 * [Spring Boot](https://spring.io/projects/spring-boot)
 * [SocksJS client](https://github.com/sockjs/sockjs-client)
 * [STOMP.js](https://stomp-js.github.io/stomp-websocket/)
 * [WebRTC adapter](https://github.com/webrtchacks/adapter#readme)
+
+Tools:
+* [Terraform](http://terraform.io/)
+* [Coturn](https://github.com/coturn/coturn)
+* [Nginx](https://nginx.org)
+* [Let's Encrypt](https://letsencrypt.org)
+* [Alibaba Cloud](https://www.alibabacloud.com)
 
 ## See also
 * [Great documentation about WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API)
