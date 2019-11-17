@@ -7,6 +7,12 @@ and video.
 ## Compilation
 TODO
 
+## Local deployment
+TODO
+
+TODO install coturn https://github.com/alibabacloud-howto/apsara-video-live-demo
+
+
 ## Cloud deployment
 TODO
 

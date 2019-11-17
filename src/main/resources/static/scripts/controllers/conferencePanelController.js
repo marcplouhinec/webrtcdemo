@@ -1,6 +1,8 @@
 import userService from '../services/userService.js'
+import stunTurnService from '../services/stunTurnService.js'
 import PeerMessage from '../model/PeerMessage.js'
 import PeerMessageCode from '../model/PeerMessageCode.js'
+import StunTurnServerConfig from "../model/StunTurnServerConfig.js";
 import navigationController from './navigationController.js';
 
 const conferencePanelController = {
@@ -17,11 +19,14 @@ const conferencePanelController = {
     _localVideoStream: null,
     /** @type {RTCPeerConnection} */
     _peerConnection: null,
+    /** @type {StunTurnServerConfig} */
+    _stunTurnServerConfig: null,
 
-    init() {
+    async init() {
         this._selectedParticipantPanel = document.getElementById('selected-participant-panel');
         this._participantMiniaturesPanel = document.getElementById('participant-miniatures-panel');
-        this._selectedParticipantVideo = document.getElementById('selected-participant-video');
+        this._selectedParticipantVideo = /** @type {HTMLVideoElement} */
+            document.getElementById('selected-participant-video');
 
         this._selectedParticipantPanel.style.display = 'none';
         this._participantMiniaturesPanel.style.display = 'none';
@@ -43,6 +48,9 @@ const conferencePanelController = {
                 this._selectParticipantMiniature(Number(userId));
             }
         });
+
+        // Load STUN / TURN server configuration
+        this._stunTurnServerConfig = await stunTurnService.getServerConfiguration();
     },
 
     /**
@@ -162,7 +170,13 @@ const conferencePanelController = {
         this._selectParticipantMiniature(this._currentUserId);
 
         // Create a WebRTC peer connection
-        this._peerConnection = new RTCPeerConnection(null); // TODO get the configuration from the server
+        this._peerConnection = new RTCPeerConnection({
+            iceServers: [{
+                urls: [this._stunTurnServerConfig.url],
+                username: this._stunTurnServerConfig.username,
+                credential: this._stunTurnServerConfig.password
+            }]
+        });
 
         this._peerConnection.addEventListener('negotiationneeded', () => {
             this._startPeerConnectionNegotiationWithOtherUser(otherUserId);
@@ -207,7 +221,13 @@ const conferencePanelController = {
         videoElement.srcObject = this._localVideoStream;
 
         // Create a WebRTC peer connection
-        this._peerConnection = new RTCPeerConnection(null); // TODO get the configuration from the server
+        this._peerConnection = new RTCPeerConnection({
+            iceServers: [{
+                urls: [this._stunTurnServerConfig.url],
+                username: this._stunTurnServerConfig.username,
+                credential: this._stunTurnServerConfig.password
+            }]
+        });
 
         this._peerConnection.addEventListener('icecandidate', event => {
             this._sendIceCandidateToOtherUser(event.candidate, offerSenderUserId);
@@ -274,7 +294,7 @@ const conferencePanelController = {
      * @param {Number} userId
      * @private
      */
-    _selectParticipantMiniature(userId) {
+    async _selectParticipantMiniature(userId) {
         const miniatureElements = document.getElementsByClassName('participant-miniature');
         for (let miniatureElement of miniatureElements) {
             const miniatureUserId = Number(miniatureElement.getAttribute('data-user-id'));
@@ -288,7 +308,7 @@ const conferencePanelController = {
 
         const videoElement = document.getElementById(`participant-miniature-video-${userId}`);
         this._selectedParticipantVideo.srcObject = videoElement.srcObject;
-        this._selectedParticipantVideo.play();
+        await this._selectedParticipantVideo.play();
 
         this._selectedParticipantVideo.style.height = (this._selectedParticipantPanel.clientHeight * .8) + 'px';
     }
