@@ -1,7 +1,4 @@
-import usersPanelController from './usersPanelController.js';
-import conferencePanelController from './conferencePanelController.js';
-
-const indexController = {
+const navigationController = {
 
     /** @type {HTMLCollectionOf<HTMLElement>} */
     _contentPanelElements: null,
@@ -10,17 +7,23 @@ const indexController = {
     /** @type {HTMLButtonElement} */
     _showNextPanelButton: null,
 
+    _isMobileDevice: false,
+
     _activeContentPanelIndex: 0,
 
     init() {
         // Handle panel navigation on mobile
-        this._showPreviousPanelButton = document.getElementById('show-previous-panel');
-        this._showNextPanelButton = document.getElementById('show-next-panel');
-        this._contentPanelElements = document.getElementsByClassName('content-panel');
-        const isMobileDevice = window.getComputedStyle(this._showPreviousPanelButton, null)
+        this._showPreviousPanelButton = /** @type {HTMLButtonElement} */
+            document.getElementById('show-previous-panel');
+        this._showNextPanelButton = /** @type {HTMLButtonElement} */
+            document.getElementById('show-next-panel');
+        this._contentPanelElements =
+            document.getElementsByClassName('content-panel');
+
+        this._isMobileDevice = window.getComputedStyle(this._showPreviousPanelButton, null)
             .getPropertyValue('display') !== 'none';
 
-        if (isMobileDevice) {
+        if (this._isMobileDevice) {
             this._displayActiveContentPanel();
 
             this._showPreviousPanelButton.addEventListener('click', () => {
@@ -33,10 +36,25 @@ const indexController = {
                 this._displayActiveContentPanel();
             });
         }
+    },
 
-        // Initialize other controllers
-        conferencePanelController.init();
-        usersPanelController.init();
+    /**
+     * @param {String} contentPanelId
+     */
+    navigateToContentPanel(contentPanelId) {
+        if (!this._isMobileDevice) {
+            return;
+        }
+
+        for (let index = 0; index < this._contentPanelElements.length; index++) {
+            const contentPanelElement = this._contentPanelElements[index];
+
+            if (contentPanelElement.id === contentPanelId) {
+                this._activeContentPanelIndex = index;
+                this._displayActiveContentPanel();
+                break;
+            }
+        }
     },
 
     _displayActiveContentPanel() {
@@ -68,4 +86,4 @@ const indexController = {
 
 };
 
-export default indexController;
+export default navigationController;

@@ -1,6 +1,7 @@
 import userService from '../services/userService.js'
 import PeerMessage from '../model/PeerMessage.js'
 import PeerMessageCode from '../model/PeerMessageCode.js'
+import navigationController from './navigationController.js';
 
 const conferencePanelController = {
 
@@ -78,6 +79,8 @@ const conferencePanelController = {
         this._selectedParticipantPanel.style.display = 'flex';
         this._participantMiniaturesPanel.style.display = 'flex';
 
+        navigationController.navigateToContentPanel('conference-panel');
+
         // If the current user is the caller, initiate the peer connection
         if (currentUserId === callerUserId) {
             this._initiatePeerConnectionToOtherUser(otherUserId);
@@ -91,7 +94,9 @@ const conferencePanelController = {
 
         const videoElements = document.getElementsByClassName('participant-miniature-video');
         for (let videoElement of videoElements) {
-            videoElement.srcObject.getTracks().forEach(track => track.stop());
+            if (videoElement.srcObject) {
+                videoElement.srcObject.getTracks().forEach(track => track.stop());
+            }
         }
         if (this._localVideoStream) {
             this._localVideoStream = null;

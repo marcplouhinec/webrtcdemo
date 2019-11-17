@@ -1,3 +1,7 @@
-import indexController from './controllers/indexController.js'
+import conferencePanelController from "./controllers/conferencePanelController.js";
+import usersPanelController from "./controllers/usersPanelController.js";
+import navigationController from "./controllers/navigationController.js";
 
-indexController.init();
+navigationController.init();
+usersPanelController.init();
+conferencePanelController.init();
