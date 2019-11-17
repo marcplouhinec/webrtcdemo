@@ -142,8 +142,8 @@ server {
         server_name webrtcdemo.dev.local;
 
         location / {
-                return 301 https://$host$request_uri;
-		}
+             return 301 https://$host$request_uri;
+        }
 }
 
 server {
@@ -164,11 +164,10 @@ server {
              proxy_http_version 1.1;
              proxy_set_header Upgrade $http_upgrade;
              proxy_set_header Connection "upgrade";
-			 proxy_pass_header X-XSRF-TOKEN;
-			 proxy_set_header Origin "http://webrtcdemo.dev.local:8080";
+             proxy_pass_header X-XSRF-TOKEN;
+             proxy_set_header Origin "http://webrtcdemo.dev.local:8080";
         }
 }
-
 ```
 
 Prepare and start Nginx:
