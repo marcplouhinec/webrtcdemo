@@ -161,12 +161,11 @@ const conferencePanelController = {
      */
     async _initiatePeerConnectionToOtherUser(otherUserId) {
         // Open the local video stream
-        this._localVideoStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        });
-        const videoElement = document.getElementById(`participant-miniature-video-${this._currentUserId}`);
-        videoElement.srcObject = this._localVideoStream;
+        if (!await this._openLocalVideoStream()) {
+            this._exitFromConference();
+            return;
+        }
+
         this._selectParticipantMiniature(this._currentUserId);
 
         // Create a WebRTC peer connection
@@ -213,12 +212,10 @@ const conferencePanelController = {
      */
     async _handleStreamOffer(offerDescription, offerSenderUserId) {
         // Open the local video stream
-        this._localVideoStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        });
-        const videoElement = document.getElementById(`participant-miniature-video-${this._currentUserId}`);
-        videoElement.srcObject = this._localVideoStream;
+        if (!await this._openLocalVideoStream()) {
+            this._exitFromConference();
+            return;
+        }
 
         // Create a WebRTC peer connection
         this._peerConnection = new RTCPeerConnection({
@@ -311,6 +308,28 @@ const conferencePanelController = {
         await this._selectedParticipantVideo.play();
 
         this._selectedParticipantVideo.style.height = (this._selectedParticipantPanel.clientHeight * .8) + 'px';
+    },
+
+    /**
+     * @return {Promise<boolean>} true = opened with success, false = not opened
+     * @private
+     */
+    async _openLocalVideoStream() {
+        // Get the media stream
+        try {
+            this._localVideoStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+        } catch (e) {
+            alert(`Unable to open the local media stream: ${e.message}`);
+            return false;
+        }
+
+        // Update the participant video element
+        const videoElement = document.getElementById(`participant-miniature-video-${this._currentUserId}`);
+        videoElement.srcObject = this._localVideoStream;
+        return true;
     }
 };
 
