@@ -1,3 +1,7 @@
-.idea
+.idea/
 *.iml
-target
+target/
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.tfstate.lock.info

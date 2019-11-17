@@ -4,10 +4,7 @@
 The goal of this demo is to showcase how to use WebRTC to allow web users to communicate with each other with audio
 and video.
 
-## Compilation
-TODO
-
-## Local deployment
+## Compilation and local deployment
 TODO
 
 TODO install coturn https://github.com/alibabacloud-howto/apsara-video-live-demo
@@ -65,19 +62,19 @@ server {
         ssl_certificate_key /etc/dev-certificates/dev.local+4-key.pem;
 
         location / {
-             proxy_pass http://localhost:8080/;
+             proxy_pass http://webrtcdemo.dev.local:8080/;
              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
              proxy_set_header X-Forwarded-Proto $scheme;
              proxy_set_header X-Forwarded-Port $server_port;
-        }
-        
-        location /stomp-endpoint/ {
-            proxy_pass "http://localhost:8080/stomp-endpoint/";
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
+			 
+             proxy_http_version 1.1;
+             proxy_set_header Upgrade $http_upgrade;
+             proxy_set_header Connection "upgrade";
+			 proxy_pass_header X-XSRF-TOKEN;
+			 proxy_set_header Origin "http://webrtcdemo.dev.local:8080";
         }
 }
+
 ```
 
 ```bash
@@ -109,13 +106,69 @@ mvn spring-boot:run
 Open 2 web browsers (e.g. Firefox and Chrome) to https://webrtcdemo.dev.local/
 
 ## Cloud deployment
-TODO
+This demo uses [Terraform](http://terraform.io/) and [Alibaba Cloud](https://www.alibabacloud.com) (if you prefer
+another cloud vendor, please make sure you adapt the Terraform scripts first).
 
-## Dependencies
+If you don't have any, [create an Alibaba Cloud account](https://www.alibabacloud.com/help/doc-detail/50482.htm) and
+[obtain an access key id and secret](https://www.alibabacloud.com/help/faq-detail/63482.htm).
+
+You also need to [buy a domain name](https://www.alibabacloud.com/domain) with Alibaba Cloud (e.g.
+"my-example-domain.xyz").
+
+In addition, please [install Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) on
+your computer.
+
+Open a terminal on your computer and execute the following commands:
+```bash
+# Navigate to the location where you have downloaded this project
+cd ~/projects/webrtc-demo
+
+# Compile the application
+mvn clean package
+
+# Configure the Terraform scripts
+export ALICLOUD_ACCESS_KEY="your-accesskey-id"
+export ALICLOUD_SECRET_KEY="your-accesskey-secret"
+export ALICLOUD_REGION="your-region-id"
+
+# Top domain name
+export TF_VAR_domain_name="my-example-domain.xyz"
+# Sub-domain name for the STUN / TURN server that allows users to bypass NAT firewalls for WebRTC
+export TF_VAR_stunturn_sub_domain_name="webrtcdemo-stunturn"
+# Sub-domain name for the web application
+export TF_VAR_webapp_sub_domain_name="webrtcdemo"
+# Root password for all ECS instances
+export TF_VAR_ecs_root_password="YourR00tPassword"
+# Username for STUN / TURN server authentication
+export TF_VAR_stunturn_user="webrtcdemo"
+# Password for STUN / TURN server authentication
+export TF_VAR_stunturn_password="YourStunTurnPassw0rd"
+# Email address that will receive notifications when TLS / SSL certificates are going to expire
+export TF_VAR_lets_encrypt_email_address="your.email@example.net"
+
+# Build the base infrastructure
+cd infrastructure/00_base
+terraform init
+terraform apply
+
+# Build the STUN / TURN server infrastructure
+cd ../10_stun_turn_server
+terraform init
+terraform apply
+
+# Build the web application infrastructure
+cd ../20_webapp
+terraform init
+terraform apply
+```
+
+You can test the web application by browsing to its URL (e.g. https://webrtcdemo.my-example-domain.xyz).
+
+## External dependencies
 * [Spring Boot](https://spring.io/projects/spring-boot)
 * [SocksJS client](https://github.com/sockjs/sockjs-client)
 * [STOMP.js](https://stomp-js.github.io/stomp-websocket/)
 * [WebRTC adapter](https://github.com/webrtchacks/adapter#readme)
 
-## External documentation
+## See also
 * [Great documentation about WebRTC](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API)
