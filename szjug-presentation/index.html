@@ -29,6 +29,12 @@
             suffix: " ";
         }
 
+        @counter-style middle-bullet {
+            system: cyclic;
+            symbols: "❓";
+            suffix: " ";
+        }
+
         @counter-style bad-bullet {
             system: cyclic;
             symbols: "❌";
@@ -64,7 +70,7 @@
         <section>
             <h2>What is WebRTC?</h2>
 
-            <img src="images/webrtc-demo-what.png" style="border: none; width: 80%;"/>
+            <img src="images/webrtc-demo-what.png" style="border: none; box-shadow: none; width: 80%;"/>
         </section>
 
         <section>
@@ -75,7 +81,9 @@
                 <li style="list-style-type: good-bullet;">Remote desktop</li>
                 <li style="list-style-type: good-bullet;">Local file sharing</li>
                 <li style="list-style-type: bad-bullet;">Video on demand</li>
-                <li style="list-style-type: bad-bullet;">Shared document edited by multiple users</li>
+                <li style="list-style-type: bad-bullet;">Collaborative real-time editor</li>
+                <li style="list-style-type: middle-bullet;">Video broadcasting</li>
+                <li style="list-style-type: middle-bullet;">Remotely-assisted self-driving car</li>
             </ul>
         </section>
 
@@ -85,7 +93,7 @@
                 <li>Peer-to-peer connection</li>
                 <li>Protocol optimized for low-latency</li>
             </ul>
-            <img src="images/webrtc-demo-low-latency.png" style="border: none;"/>
+            <img src="images/webrtc-demo-low-latency.png" style="border: none; box-shadow: none;"/>
         </section>
 
         <section>
@@ -100,7 +108,7 @@
 
         <section>
             <h2>Demo architecture</h2>
-            <img src="images/webrtc-demo-architecture.png" style="border: none;"/>
+            <img src="images/webrtc-demo-architecture.png" style="border: none; box-shadow: none;"/>
         </section>
 
         <section>
@@ -112,19 +120,19 @@
         <section>
             <h2>Local deployment</h2>
             <h3>With HTTPS</h3>
-            <img src="images/webrtc-demo-https.png" style="border: none; width: 40%;"/>
+            <img src="images/webrtc-demo-https.png" style="border: none; box-shadow: none; width: 40%;"/>
         </section>
 
         <section>
             <h2>Local deployment</h2>
             <h3>With a STUN / TURN server</h3>
-            <img src="images/webrtc-demo-stun-turn-server.png" style="border: none;"/>
+            <img src="images/webrtc-demo-stun-turn-server.png" style="border: none; box-shadow: none;"/>
         </section>
 
         <section>
             <h2>Cloud deployment</h2>
 
-            <img src="images/webrtc-demo-cloud-deployment.png" style="border: none;"/>
+            <img src="images/webrtc-demo-cloud-deployment.png" style="border: none; box-shadow: none;"/>
             <p>
                 <a href="https://webrtcdemo.ydev.xyz/">https://webrtcdemo.ydev.xyz/</a>
             </p>
@@ -132,7 +140,7 @@
 
         <section>
             <h2>Cloud deployment (HA)</h2>
-            <img src="images/webrtc-demo-cloud-deployment-ha.png" style="border: none; width: 75%;"/>
+            <img src="images/webrtc-demo-cloud-deployment-ha.png" style="border: none; box-shadow: none; width: 75%;"/>
         </section>
 
         <section>
